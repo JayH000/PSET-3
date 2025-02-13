@@ -1,31 +1,19 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import requests
-import io
 
-# GitHub repository containing LDOS data
-github_repo_url = "https://github.com/Physics-129AL/Local_density_of_states_near_band_edges/raw/main/"
-
-# Local directory inside your repo to save heatmaps
+# Set local directory where LDOS files are stored
+input_dir = "Local_density_of_states_near_band_edge"
 heatmap_dir = "local_density_heatmaps"
+
+# Create output directory if it doesn’t exist
 os.makedirs(heatmap_dir, exist_ok=True)
 
-# List of LDOS files (You might need to get filenames manually if they are not indexed)
-file_list = ["local_density_of_states_for_level_0.txt,local_density_of_states_for_level_1.txt, local_density_of_states_for_level_2.txt, local_density_of_states_for_level_3.txt, local_density_of_states_for_level_4.txt, local_density_of_states_for_level_5.txt, local_density_of_states_for_level_6.txt, local_density_of_states_for_level_7.txt, local_density_of_states_for_level_8.txt, local_density_of_states_for_level_9.txt, local_density_of_states_for_level_10.txt "]  
+# Function to read LDOS data (Fixed for CSV format)
+def read_ldos_file(file_path):
+    return np.loadtxt(file_path, delimiter=",")  # Added delimiter to handle commas
 
-# Function to download and read LDOS data
-def fetch_ldos_data(filename):
-    file_url = github_repo_url + filename
-    response = requests.get(file_url)
-    if response.status_code == 200:
-        data = np.loadtxt(io.StringIO(response.text))
-        return data
-    else:
-        print(f"Failed to download {filename}")
-        return None
-
-# Function to generate a heatmap
+# Function to generate heatmap
 def generate_heatmap(data, filename):
     plt.figure(figsize=(6, 5))
     plt.imshow(data, cmap="inferno", origin="lower")
@@ -34,15 +22,20 @@ def generate_heatmap(data, filename):
     plt.xlabel("X")
     plt.ylabel("Y")
 
-    # Save the heatmap in your repository
+    # Save the heatmap in the output directory
     output_path = os.path.join(heatmap_dir, f"{filename}_heatmap.png")
     plt.savefig(output_path)
     plt.close()
 
-# Process each LDOS file
-for file in file_list:
-    data = fetch_ldos_data(file)
-    if data is not None:
-        generate_heatmap(data, file)
+# Process all LDOS files in the local directory
+for file in os.listdir(input_dir):
+    if file.endswith(".txt"):
+        file_path = os.path.join(input_dir, file)
+        try:
+            data = read_ldos_file(file_path)  # Use the fixed function
+            generate_heatmap(data, file)
+            print(f" Heatmap generated for {file}")
+        except Exception as e:
+            print(f" Error processing {file}: {e}")
 
-print("Heatmaps generated and saved in your repository!")
+print(" Heatmaps saved successfully! Check 'local_density_heatmaps' folder.")
