@@ -1,0 +1,3 @@
+Numerical Integral: 8.587077258115393
+Closed-form Result: 8.5870772581153
+Verification: Success

@@ -1,0 +1,13 @@
+determinant_term = np.sqrt((2 * np.pi) ** N * np.linalg.det(A_inv))
+Results for A:
+Numerical Integral: 4.275823659021463
+Closed-form Result: 4.275823659011514
+Verification: Success
+
+Results for A':
+Numerical Integral: inf
+Closed-form Result: nan
+Verification: Failure
+
+Eigenvalues of A': [ 8.18227818  3.65391611 -0.83619429]
+Is A' positive definite? False
